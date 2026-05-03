@@ -1,28 +1,26 @@
-import { 
-  CheckCircle2, 
-  Clock, 
-  Plus, 
-  Search, 
-  Filter,
+import { motion } from 'framer-motion';
+import {
   ArrowLeft,
   Calendar,
-  User,
-  MoreHorizontal
+  CheckCircle2,
+  MoreHorizontal,
+  Plus,
+  Search,
+  User
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'revine';
-import { taskService, projectService } from '../../services/project';
-import { motion } from 'framer-motion';
+import { Link, useParams } from 'revine';
+import { taskService } from '../../services/project';
 
 export default function ProjectDetails() {
   const { id } = useParams();
   const [tasks, setTasks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [newTask, setNewTask] = useState({ 
-    title: '', 
-    description: '', 
-    status: 'todo', 
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    status: 'todo',
     priority: 'medium',
     projectId: parseInt(id || '0')
   });
@@ -78,13 +76,13 @@ export default function ProjectDetails() {
           <div className="flex gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-              <input 
-                type="text" 
-                placeholder="Search tasks..." 
+              <input
+                type="text"
+                placeholder="Search tasks..."
                 className="bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
-            <button 
+            <button
               onClick={() => setShowTaskModal(true)}
               className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-600/20"
             >
@@ -97,27 +95,27 @@ export default function ProjectDetails() {
 
       {/* Kanban-style Columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <TaskColumn 
-          title="To Do" 
-          tasks={tasks.filter(t => t.status === 'todo')} 
-          onStatusChange={updateTaskStatus} 
+        <TaskColumn
+          title="To Do"
+          tasks={tasks.filter(t => t.status === 'todo')}
+          onStatusChange={updateTaskStatus}
         />
-        <TaskColumn 
-          title="In Progress" 
-          tasks={tasks.filter(t => t.status === 'in_progress')} 
-          onStatusChange={updateTaskStatus} 
+        <TaskColumn
+          title="In Progress"
+          tasks={tasks.filter(t => t.status === 'in_progress')}
+          onStatusChange={updateTaskStatus}
         />
-        <TaskColumn 
-          title="Done" 
-          tasks={tasks.filter(t => t.status === 'done')} 
-          onStatusChange={updateTaskStatus} 
+        <TaskColumn
+          title="Done"
+          tasks={tasks.filter(t => t.status === 'done')}
+          onStatusChange={updateTaskStatus}
         />
       </div>
 
       {/* Create Task Modal */}
       {showTaskModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-slate-900 border border-white/10 p-8 rounded-3xl w-full max-w-md shadow-2xl"
@@ -126,8 +124,8 @@ export default function ProjectDetails() {
             <form onSubmit={handleCreateTask} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">Title</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   value={newTask.title}
                   onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
@@ -137,7 +135,7 @@ export default function ProjectDetails() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">Priority</label>
-                <select 
+                <select
                   value={newTask.priority}
                   onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors appearance-none"
@@ -149,7 +147,7 @@ export default function ProjectDetails() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">Description</label>
-                <textarea 
+                <textarea
                   value={newTask.description}
                   onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors h-32 resize-none"
@@ -157,14 +155,14 @@ export default function ProjectDetails() {
                 />
               </div>
               <div className="flex gap-4 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowTaskModal(false)}
                   className="flex-1 px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 font-bold transition-all"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="flex-1 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold transition-all shadow-lg shadow-indigo-600/20"
                 >
@@ -184,10 +182,9 @@ function TaskColumn({ title, tasks, onStatusChange }: { title: string, tasks: an
     <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 flex flex-col h-[700px]">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className={`h-2 w-2 rounded-full ${
-            title === 'To Do' ? 'bg-indigo-500' : 
-            title === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
-          }`} />
+          <div className={`h-2 w-2 rounded-full ${title === 'To Do' ? 'bg-indigo-500' :
+              title === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
+            }`} />
           <h3 className="font-bold text-slate-300">{title}</h3>
           <span className="bg-white/5 px-2 py-0.5 rounded text-xs text-slate-500">{tasks.length}</span>
         </div>
@@ -207,20 +204,19 @@ function TaskColumn({ title, tasks, onStatusChange }: { title: string, tasks: an
 
 function TaskCard({ task, onStatusChange }: { task: any, onStatusChange: (id: number, status: string) => void }) {
   return (
-    <motion.div 
+    <motion.div
       layoutId={task.id.toString()}
       className="bg-slate-900 border border-white/10 p-5 rounded-2xl hover:border-white/20 transition-all cursor-grab active:cursor-grabbing"
     >
       <div className="flex justify-between items-start mb-3">
-        <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${
-          task.priority === 'high' ? 'bg-rose-500/10 text-rose-500' : 
-          task.priority === 'medium' ? 'bg-amber-500/10 text-amber-500' : 'bg-indigo-500/10 text-indigo-500'
-        }`}>
+        <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${task.priority === 'high' ? 'bg-rose-500/10 text-rose-500' :
+            task.priority === 'medium' ? 'bg-amber-500/10 text-amber-500' : 'bg-indigo-500/10 text-indigo-500'
+          }`}>
           {task.priority}
         </span>
         <div className="flex gap-1">
           {task.status !== 'done' && (
-            <button 
+            <button
               onClick={() => onStatusChange(task.id, task.status === 'todo' ? 'in_progress' : 'done')}
               className="text-slate-600 hover:text-emerald-400 transition-colors"
               title="Move to next status"
@@ -232,7 +228,7 @@ function TaskCard({ task, onStatusChange }: { task: any, onStatusChange: (id: nu
       </div>
       <h4 className="font-bold mb-2 text-slate-200">{task.title}</h4>
       <p className="text-slate-400 text-xs line-clamp-2 mb-4">{task.description}</p>
-      
+
       <div className="flex items-center justify-between pt-4 border-t border-white/5">
         <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
           <Calendar className="h-3 w-3" />
