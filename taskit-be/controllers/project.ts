@@ -144,3 +144,44 @@ export const getProjectStats = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// Get members of a project
+export const getProjectMembers = async (req: Request, res: Response) => {
+  const { projectId } = req.params;
+  const userId = (req as any).user.id;
+
+  try {
+    const db = await connectDB();
+
+    // Verify user is member of the project
+    const membership = await db
+      .select()
+      .from(projectMembers)
+      .where(and(eq(projectMembers.projectId, parseInt(projectId as string)), eq(projectMembers.userId, userId)))
+      .limit(1);
+
+    if (membership.length === 0) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const members = await db
+      .select({
+        id: projectMembers.id,
+        role: projectMembers.role,
+        user: {
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          avatarUrl: users.avatarUrl,
+        },
+      })
+      .from(projectMembers)
+      .innerJoin(users, eq(projectMembers.userId, users.id))
+      .where(eq(projectMembers.projectId, parseInt(projectId as string)));
+
+    return res.status(200).json({ members });
+  } catch (error) {
+    console.error("Get Members Error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
