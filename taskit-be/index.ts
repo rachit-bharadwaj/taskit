@@ -9,7 +9,7 @@ import { getLocalIpAddress } from "./utils/config";
 import { configureLogger } from "./utils/logger";
 
 // Routes
-import { authRoutes, baseRoutes } from "./routes";
+import { authRoutes, baseRoutes, projectRoutes, taskRoutes } from "./routes";
 
 dotenv.config();
 
@@ -40,6 +40,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // API routes
 app.use("/", baseRoutes);
 app.use("/auth", authRoutes);
+app.use("/projects", projectRoutes);
+app.use("/tasks", taskRoutes);
 
 // start the server
 const startServer = async () => {

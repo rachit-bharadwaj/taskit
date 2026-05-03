@@ -76,10 +76,10 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/auth"
+              href={user ? "/dashboard" : "/auth"}
               className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 px-8 py-4 rounded-xl text-lg font-bold transition-all shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-2"
             >
-              Start for Free
+              {user ? "Go to Dashboard" : "Start for Free"}
               <LayoutDashboard className="h-5 w-5" />
             </Link>
             <button className="w-full sm:w-auto px-8 py-4 rounded-xl text-lg font-bold border border-white/10 hover:bg-white/5 transition-all">
