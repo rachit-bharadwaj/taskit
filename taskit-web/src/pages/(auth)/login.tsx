@@ -64,7 +64,7 @@ function LoginContent() {
 
   const handleGithubLogin = () => {
     setIsLoading('github');
-    const clientId = import.meta.env.REVINE_PUBLIC_GITHUB_CLIENT_ID;
+    const clientId = process.env.REVINE_PUBLIC_GITHUB_CLIENT_ID;
     const redirectUri = `${window.location.origin}/auth/callback`;
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
   };

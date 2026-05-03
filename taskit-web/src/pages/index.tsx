@@ -1,7 +1,25 @@
-import { CheckCircle2, LayoutDashboard, LogIn } from 'lucide-react';
-import { Link } from 'revine';
+import { CheckCircle2, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, useRouter } from 'revine';
 
 export default function HomePage() {
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
+    setUser(null);
+    router.push('/auth');
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30">
       <nav className="border-b border-white/5 bg-slate-950/50 backdrop-blur-md sticky top-0 z-50">
@@ -12,13 +30,38 @@ export default function HomePage() {
             </div>
             <span className="font-bold text-xl tracking-tight">Taskit</span>
           </div>
-          <Link
-            href="/auth"
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-indigo-600/20"
-          >
-            <LogIn className="h-4 w-4" />
-            Sign In
-          </Link>
+
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                  {user.avatarUrl && (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name}
+                      className="h-6 w-6 rounded-full border border-white/20"
+                    />
+                  )}
+                  <span className="text-sm font-medium text-slate-200">{user.name}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-white/10"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/auth"
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-indigo-600/20"
+              >
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Link>
+            )}
+          </div>
         </div>
       </nav>
 
