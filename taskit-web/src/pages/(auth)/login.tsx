@@ -1,23 +1,72 @@
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import { motion } from 'framer-motion';
-import {
-  ShieldCheck
-} from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from 'revine';
 
-export default function AuthPage() {
+import api from '../../lib/api';
+
+function LoginContent() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSocialLogin = (provider: 'google' | 'github') => {
-    setIsLoading(provider);
-    // Simulate API call
-    setTimeout(() => {
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsLoading('google');
+      try {
+        // Note: useGoogleLogin by default gives an access token. 
+        // For idToken, we usually use the GoogleLogin button component.
+        // But we can also get the user info directly or use the access token.
+        // Let's assume we want to verify the token on backend.
+        // For simplicity with @react-oauth/google's useGoogleLogin (implicit flow),
+        // we can send the access token or use the standard button.
+        // I'll stick to the implicit flow for now and send access token to a new endpoint 
+        // or just fetch user info on frontend and send to backend.
+        
+        // BETTER: I'll use the ID Token from the standard GoogleLogin component if possible, 
+        // but useGoogleLogin is more flexible for custom buttons.
+        // Let's fetch user info and send to backend.
+        const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+
+        const { email, name, picture, sub: providerId } = userInfo.data;
+
+        // Note: Since we are fetching on frontend, we don't need backend verification for this demo,
+        // but the backend should ideally verify.
+        // To stick to "proper", I'll send the access token and let backend verify it.
+        const response = await api.post('/auth/google', { 
+          accessToken: tokenResponse.access_token,
+          // We can also just send the data if we trust the frontend (less secure)
+          email, name, avatarUrl: picture, provider: 'google', providerId
+        });
+
+        if (response.data.token) {
+          localStorage.setItem('auth_token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          router.push('/');
+        }
+      } catch (error) {
+        console.error('Google Login Error:', error);
+        alert('Google authentication failed');
+      } finally {
+        setIsLoading(null);
+      }
+    },
+    onError: () => {
       setIsLoading(null);
-      router.push('/');
-    }, 1500);
+      alert('Google Login Failed');
+    },
+  });
+
+  const handleGithubLogin = () => {
+    setIsLoading('github');
+    const clientId = import.meta.env.REVINE_PUBLIC_GITHUB_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/auth/callback`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
   };
 
   return (
@@ -75,7 +124,7 @@ export default function AuthPage() {
 
               <div className="space-y-4">
                 <button
-                  onClick={() => handleSocialLogin('google')}
+                  onClick={() => handleGoogleLogin()}
                   disabled={!!isLoading}
                   className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed border border-white/10 rounded-2xl py-4 text-slate-900 font-bold transition-all shadow-xl shadow-white/5 group"
                 >
@@ -88,7 +137,7 @@ export default function AuthPage() {
                 </button>
 
                 <button
-                  onClick={() => handleSocialLogin('github')}
+                  onClick={handleGithubLogin}
                   disabled={!!isLoading}
                   className="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed border border-white/10 rounded-2xl py-4 text-white font-bold transition-all shadow-xl shadow-black/20 group"
                 >
@@ -111,5 +160,15 @@ export default function AuthPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  const clientId = process.env.REVINE_PUBLIC_GOOGLE_CLIENT_ID || "";
+  
+  return (
+    <GoogleOAuthProvider clientId={clientId}>
+      <LoginContent />
+    </GoogleOAuthProvider>
   );
 }

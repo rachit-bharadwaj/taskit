@@ -1,3 +1,4 @@
 import baseRoutes from "./base";
+import { authRoutes } from "./auth";
 
-export { baseRoutes };
+export { baseRoutes, authRoutes };
