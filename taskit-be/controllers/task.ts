@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { eq, and } from "drizzle-orm";
 import connectDB from "../database/connection";
-import { tasks, projectMembers } from "../database/schema";
+import { tasks, projectMembers, users } from "../database/schema";
 
 // Create a task
 export const createTask = async (req: Request, res: Response) => {
@@ -60,8 +60,19 @@ export const getProjectTasks = async (req: Request, res: Response) => {
     }
 
     const projectTasks = await db
-      .select()
+      .select({
+        id: tasks.id,
+        title: tasks.title,
+        description: tasks.description,
+        status: tasks.status,
+        priority: tasks.priority,
+        dueDate: tasks.dueDate,
+        projectId: tasks.projectId,
+        assigneeId: tasks.assigneeId,
+        assigneeName: users.name,
+      })
       .from(tasks)
+      .leftJoin(users, eq(tasks.assigneeId, users.id))
       .where(eq(tasks.projectId, parseInt(projectId as string)));
 
     return res.status(200).json({ tasks: projectTasks });

@@ -17,6 +17,10 @@ export const projectService = {
     const response = await api.post('/projects/members', data);
     return response.data;
   },
+  getMembers: async (projectId: number) => {
+    const response = await api.get(`/projects/${projectId}/members`);
+    return response.data.members;
+  },
 };
 
 export const taskService = {
