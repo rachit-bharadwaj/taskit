@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import api from '@/lib/api';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'revine';
-import api from '../../lib/api';
 
 export default function AuthCallback() {
   const router = useRouter();
-  const called = React.useRef(false);
+  const called = useRef(false);
 
   useEffect(() => {
     if (called.current) return;
@@ -17,7 +17,7 @@ export default function AuthCallback() {
       if (code) {
         try {
           const response = await api.post('/auth/github', { code });
-          
+
           if (response.data.token) {
             localStorage.setItem('auth_token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));

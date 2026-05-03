@@ -7,6 +7,8 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from 'revine';
 
+import { authImages } from '../../../public/images';
+
 import api from '../../lib/api';
 
 function LoginContent() {
@@ -25,7 +27,7 @@ function LoginContent() {
         // we can send the access token or use the standard button.
         // I'll stick to the implicit flow for now and send access token to a new endpoint 
         // or just fetch user info on frontend and send to backend.
-        
+
         // BETTER: I'll use the ID Token from the standard GoogleLogin component if possible, 
         // but useGoogleLogin is more flexible for custom buttons.
         // Let's fetch user info and send to backend.
@@ -38,7 +40,7 @@ function LoginContent() {
         // Note: Since we are fetching on frontend, we don't need backend verification for this demo,
         // but the backend should ideally verify.
         // To stick to "proper", I'll send the access token and let backend verify it.
-        const response = await api.post('/auth/google', { 
+        const response = await api.post('/auth/google', {
           accessToken: tokenResponse.access_token,
           // We can also just send the data if we trust the frontend (less secure)
           email, name, avatarUrl: picture, provider: 'google', providerId
@@ -75,7 +77,7 @@ function LoginContent() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden border-r border-white/5">
         <div
           className="absolute inset-0 bg-cover bg-center transform scale-105"
-          style={{ backgroundImage: 'url("/auth-bg.png")' }}
+          style={{ backgroundImage: `url(${authImages.authBg})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent" />
 
@@ -165,7 +167,7 @@ function LoginContent() {
 
 export default function AuthPage() {
   const clientId = process.env.REVINE_PUBLIC_GOOGLE_CLIENT_ID || "";
-  
+
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <LoginContent />
