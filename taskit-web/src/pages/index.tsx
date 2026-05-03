@@ -1,5 +1,5 @@
+import { CheckCircle2, LayoutDashboard, LogIn } from 'lucide-react';
 import { Link } from 'revine';
-import { LayoutDashboard, LogIn, CheckCircle2 } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -12,8 +12,8 @@ export default function HomePage() {
             </div>
             <span className="font-bold text-xl tracking-tight">Taskit</span>
           </div>
-          <Link 
-            to="/auth" 
+          <Link
+            href="/auth"
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-indigo-600/20"
           >
             <LogIn className="h-4 w-4" />
@@ -28,12 +28,12 @@ export default function HomePage() {
             Manage Tasks with <br /> <span className="text-indigo-500">Precision.</span>
           </h1>
           <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
-            Taskit helps teams organize, track, and complete projects faster than ever. 
+            Taskit helps teams organize, track, and complete projects faster than ever.
             Experience the next generation of task management.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              to="/auth" 
+            <Link
+              href="/auth"
               className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 px-8 py-4 rounded-xl text-lg font-bold transition-all shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-2"
             >
               Start for Free
