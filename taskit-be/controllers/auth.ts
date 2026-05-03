@@ -105,11 +105,17 @@ export const githubLogin = async (req: Request, res: Response) => {
         client_id: GITHUB_CLIENT_ID,
         client_secret: GITHUB_CLIENT_SECRET,
         code,
+        redirect_uri: process.env.GITHUB_REDIRECT_URI || "http://localhost:3000/auth/callback",
       },
       { headers: { Accept: "application/json" } }
     );
 
-    const { access_token } = tokenResponse.data;
+    const { access_token, error, error_description } = tokenResponse.data;
+
+    if (error) {
+      console.error("GitHub OAuth Error:", error, error_description);
+      return res.status(400).json({ error: error_description || error });
+    }
 
     if (!access_token) {
       return res.status(400).json({ error: "Failed to obtain access token from GitHub" });
@@ -183,9 +189,10 @@ export const githubLogin = async (req: Request, res: Response) => {
         avatarUrl: userData.avatarUrl,
       },
     });
-  } catch (error) {
-    console.error("GitHub Auth Error:", error);
-    return res.status(500).json({ error: "GitHub authentication failed" });
+  } catch (error: any) {
+    console.error("GitHub Auth Error:", error.response?.data || error.message);
+    const errorMessage = error.response?.data?.error_description || error.response?.data?.error || "GitHub authentication failed";
+    return res.status(error.response?.status || 500).json({ error: errorMessage });
   }
 };
 

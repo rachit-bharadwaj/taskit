@@ -2,9 +2,9 @@ import { middlewareResponse } from "revine";
 import type { MiddlewareFn } from "revine";
 
 // Define which paths are public (no auth needed)
-const PUBLIC_PATHS = ["/login", "/register", "/forgot-password"];
+const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/auth/callback"];
 // Define auth-only paths (logged-in users can't visit these)
-const AUTH_PATHS = ["/login", "/register"];
+const AUTH_PATHS = ["/login", "/register", "/auth/callback"];
 
 export default (async ({ pathname }) => {
   const token = localStorage.getItem("auth_token");

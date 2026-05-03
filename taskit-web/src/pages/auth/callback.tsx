@@ -4,8 +4,12 @@ import api from '../../lib/api';
 
 export default function AuthCallback() {
   const router = useRouter();
+  const called = React.useRef(false);
 
   useEffect(() => {
+    if (called.current) return;
+    called.current = true;
+
     const handleCallback = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
